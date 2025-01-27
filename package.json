@@ -1,0 +1,164 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "badger",
+  "title": "Badger",
+  "description": "Dock notifications in the menu bar.",
+  "author": "robbiehobby",
+  "icon": "extension-icon.png",
+  "scripts": {
+    "watch": "ray develop",
+    "build": "ray build",
+    "build:local": "ray build -o ./public"
+  },
+  "devDependencies": {
+    "@raycast/api": "^1.85.2",
+    "@raycast/utils": "^1.18.1",
+    "@types/node": "20.8.10",
+    "@types/react": "18.3.3",
+    "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "esbuild": "^0.25.0"
+  },
+  "commands": [
+    {
+      "name": "badges",
+      "title": "Configure Badges",
+      "description": "Manage badges shown in the menu bar.",
+      "mode": "view"
+    },
+    {
+      "name": "menubar",
+      "title": "Badger",
+      "description": "Show badger in the menu bar.",
+      "mode": "menu-bar",
+      "interval": "10s"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "total",
+      "label": "Enable Total Count",
+      "description": "Choose whether to show the total badge count in the menu bar.",
+      "type": "checkbox",
+      "default": true,
+      "required": false
+    },
+    {
+      "name": "disableInactive",
+      "label": "Disable Closed Applications",
+      "description": "Choose whether to hide applications that are not currently opened.",
+      "type": "checkbox",
+      "default": false,
+      "required": false
+    },
+    {
+      "name": "attn",
+      "label": "Enable Attention Dots",
+      "description": "Choose whether to show attention dot badges.",
+      "type": "checkbox",
+      "default": true,
+      "required": false
+    },
+    {
+      "name": "attnDot",
+      "title": "Attention Dot",
+      "description": "Choose a character to use as the attention dot.",
+      "type": "textfield",
+      "default": "•",
+      "required": false
+    },
+    {
+      "name": "color",
+      "title": "Idle Color",
+      "description": "Choose the color to use when no badges are present in the Dock.",
+      "type": "dropdown",
+      "data": [
+        {
+          "title": "Primary Text",
+          "value": ""
+        },
+        {
+          "title": "Secondary Text",
+          "value": "raycast-secondary-text"
+        },
+        {
+          "title": "Blue",
+          "value": "raycast-blue"
+        },
+        {
+          "title": "Green",
+          "value": "raycast-green"
+        },
+        {
+          "title": "Magenta",
+          "value": "raycast-magenta"
+        },
+        {
+          "title": "Orange",
+          "value": "raycast-orange"
+        },
+        {
+          "title": "Purple",
+          "value": "raycast-purple"
+        },
+        {
+          "title": "Red",
+          "value": "raycast-red"
+        },
+        {
+          "title": "Yellow",
+          "value": "raycast-yellow"
+        }
+      ],
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "activeColor",
+      "title": "Activated Color",
+      "description": "Choose the color used when one or more badges are present in the Dock.",
+      "type": "dropdown",
+      "data": [
+        {
+          "title": "Primary Text",
+          "value": ""
+        },
+        {
+          "title": "Secondary Text",
+          "value": "raycast-secondary-text"
+        },
+        {
+          "title": "Blue",
+          "value": "raycast-blue"
+        },
+        {
+          "title": "Green",
+          "value": "raycast-green"
+        },
+        {
+          "title": "Magenta",
+          "value": "raycast-magenta"
+        },
+        {
+          "title": "Orange",
+          "value": "raycast-orange"
+        },
+        {
+          "title": "Purple",
+          "value": "raycast-purple"
+        },
+        {
+          "title": "Red",
+          "value": "raycast-red"
+        },
+        {
+          "title": "Yellow",
+          "value": "raycast-yellow"
+        }
+      ],
+      "default": "raycast-orange",
+      "required": false
+    }
+  ]
+}
