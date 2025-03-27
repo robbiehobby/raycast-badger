@@ -13,8 +13,8 @@
   "devDependencies": {
     "@raycast/api": "^1.85.2",
     "@raycast/utils": "^1.18.1",
-    "@types/node": "20.8.10",
-    "@types/react": "18.3.3",
+    "@types/node": "^22.13.14",
+    "@types/react": "^19.0.12",
     "typescript": "^5.4.5"
   },
   "commands": [
