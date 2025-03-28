@@ -1,25 +1,21 @@
-import { runAppleScript } from "@raycast/utils";
 import { promises as fs } from "node:fs";
-import { environment } from "@raycast/api";
 import path from "node:path";
-import { BadgerApplication } from "./badger.ts";
+import { runAppleScript } from "@raycast/utils";
+import { environment } from "@raycast/api";
 
-function useScripts() {
-  const assets = path.join(environment.assetsPath, "scripts");
+const assets = path.join(environment.assetsPath, "scripts");
 
-  async function appIsOpen(badge: BadgerApplication) {
-    const script = await fs.readFile(path.join(assets, "appIsOpen.applescript"));
-    const result = await runAppleScript(script.toString(), [badge.bundleId]);
-    return result === "true";
-  }
+export default function scripts() {}
 
-  async function getBadgeCount(badge: BadgerApplication) {
-    const script = await fs.readFile(path.join(assets, "getBadgeCount.applescript"));
-    const result = await runAppleScript(script.toString(), [badge.name]);
-    return result;
-  }
+scripts.isOpen = async (bundleId: string) => {
+  const script = await fs.readFile(path.join(assets, "app-status.applescript"));
+  return (await runAppleScript(script.toString(), [bundleId])) === "true";
+};
 
-  return { appIsOpen, getBadgeCount };
-}
-
-export default useScripts;
+scripts.getCount = async (appName: string): Promise<true | number> => {
+  const script = await fs.readFile(path.join(assets, "badge-count.applescript"));
+  const result = await runAppleScript(script.toString(), [appName]);
+  if (result === "•") return true;
+  const count = parseInt(result, 10);
+  return Number.isNaN(count) ? 0 : count;
+};

@@ -2,81 +2,47 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "badger",
   "title": "Badger",
-  "description": "Dock notifications in the menu bar.",
+  "description": "Show macOS Dock badges in the menu bar.",
   "author": "robbiehobby",
   "icon": "extension-icon.png",
-  "scripts": {
-    "watch": "ray develop",
-    "build": "ray build",
-    "build:local": "ray build -o ./public"
-  },
-  "devDependencies": {
-    "@raycast/api": "^1.85.2",
-    "@raycast/utils": "^1.18.1",
-    "@types/node": "20.8.10",
-    "@types/react": "18.3.3",
-    "typescript": "^5.4.5"
-  },
   "commands": [
     {
-      "name": "badges",
-      "title": "Configure Badges",
-      "description": "Manage badges shown in the menu bar.",
+      "name": "add",
+      "title": "Add Badge",
+      "description": "Add a new application badge to the menu bar.",
       "mode": "view"
     },
     {
-      "name": "menubar",
-      "title": "Badger",
-      "description": "Show badger in the menu bar.",
+      "name": "badges",
+      "title": "Menu Bar Badges",
+      "description": "Show the configured application badges in the menu bar.",
       "mode": "menu-bar",
       "interval": "10s"
+    },
+    {
+      "name": "search",
+      "title": "Search Badges",
+      "description": "Search for and manage application badges displayed in the menu bar.",
+      "mode": "view"
     }
   ],
   "preferences": [
     {
-      "name": "total",
-      "label": "Enable Total Count",
-      "description": "Choose whether to show the total badge count in the menu bar.",
+      "name": "showTotal",
+      "label": "Show the total count",
+      "description": "When one or more applications have badges, the total is displayed next to the menu bar icon.",
       "type": "checkbox",
       "default": true,
       "required": false
     },
     {
-      "name": "disableInactive",
-      "label": "Disable Closed Applications",
-      "description": "Choose whether to hide applications that are not currently opened.",
-      "type": "checkbox",
-      "default": false,
-      "required": false
-    },
-    {
-      "name": "attn",
-      "label": "Enable Attention Dots",
-      "description": "Choose whether to show attention dot badges.",
-      "type": "checkbox",
-      "default": true,
-      "required": false
-    },
-    {
-      "name": "attnDot",
-      "title": "Attention Dot",
-      "description": "Choose a character to use as the attention dot.",
-      "type": "textfield",
-      "default": "•",
-      "required": false
-    },
-    {
-      "name": "color",
-      "title": "Idle Color",
-      "description": "Choose the color to use when no badges are present in the Dock.",
+      "name": "defaultColor",
+      "title": "Icon Color",
+      "description": "Choose the color of the menu bar icon when no applications have badges.",
       "type": "dropdown",
       "data": [
         {
-          "title": "Primary Text",
-          "value": ""
-        },
-        {
-          "title": "Secondary Text",
+          "title": "Text",
           "value": "raycast-secondary-text"
         },
         {
@@ -108,21 +74,17 @@
           "value": "raycast-yellow"
         }
       ],
-      "default": "",
+      "default": "raycast-secondary-text",
       "required": false
     },
     {
       "name": "activeColor",
-      "title": "Activated Color",
-      "description": "Choose the color used when one or more badges are present in the Dock.",
+      "title": "Active Icon Color",
+      "description": "Choose the color of the menu bar icon when one or more applications have badges.",
       "type": "dropdown",
       "data": [
         {
-          "title": "Primary Text",
-          "value": ""
-        },
-        {
-          "title": "Secondary Text",
+          "title": "Text",
           "value": "raycast-secondary-text"
         },
         {
@@ -154,8 +116,19 @@
           "value": "raycast-yellow"
         }
       ],
-      "default": "raycast-orange",
+      "default": "raycast-red",
       "required": false
     }
-  ]
+  ],
+  "scripts": {
+    "dev": "ray develop",
+    "build": "ray build && ray build -o ./public"
+  },
+  "devDependencies": {
+    "@raycast/api": "^1.85.2",
+    "@raycast/utils": "^1.18.1",
+    "@types/node": "^22.13.14",
+    "@types/react": "^19.0.12",
+    "typescript": "^5.4.5"
+  }
 }

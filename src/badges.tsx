@@ -1,99 +1,73 @@
-import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
-import React, { useEffect, useState } from "react";
-import { BadgerApplication } from "./utils/badger.ts";
-import useStorage from "./utils/storage.ts";
-import Create from "./create.tsx";
+import { useEffect, useState } from "react";
+import { launchCommand, LaunchType, MenuBarExtra, open, openExtensionPreferences } from "@raycast/api";
+import { useCachedState } from "@raycast/utils";
+import storage from "./utils/storage.ts";
+import scripts from "./utils/scripts.ts";
+import catchError from "./utils/error.ts";
 
-function Command() {
-  const [loading, setLoading] = useState(true);
-  const [badges, setBadges] = useState<BadgerApplication[]>([]);
-  const { getBadges, saveBadge, removeBadge } = useStorage();
+export default function Badges() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [cache, setCache] = useCachedState<BadgeCache | null>("badges", null);
 
   useEffect(() => {
-    async function getStorage() {
-      setBadges(await getBadges());
-      setLoading(false);
-    }
-    getStorage();
-  }, [loading]);
+    (async () => {
+      const badges = await storage.getBadges();
 
-  async function handleToggle(badge: BadgerApplication) {
-    await saveBadge({ ...badge, enabled: !badge.enabled });
-    setLoading(true);
-  }
-  async function handleRemove(badge?: BadgerApplication) {
-    await removeBadge(badge);
-    setLoading(true);
-  }
+      await Promise.all(
+        Object.entries(badges).map(async ([bundleId, badge]) => {
+          try {
+            if (!badge.showInactive && !(await scripts.isOpen(bundleId))) delete badges[bundleId];
+            const count = await scripts.getCount(badge.app.name);
+            if (count === true) badge.status = { count: 1, indeterminate: true };
+            else badge.status.count = count;
+          } catch (error) {
+            await catchError(error as Error);
+          }
+        }),
+      );
 
-  const CreateNewBadge = () => (
-    <Action.Push
-      title="Create New Badge"
-      icon={Icon.PlusCircle}
-      shortcut={{ modifiers: ["cmd"], key: "n" }}
-      target={<Create onPop={() => setLoading(true)} />}
-    />
-  );
+      setCache({ badges, preferences: await storage.getPreferences() });
+      setIsLoading(false);
+    })();
+  }, []);
+
+  let sortedBadges: Badge[] = [];
+  if (cache?.badges) sortedBadges = storage.sortBadges(cache.badges);
+  const total = sortedBadges.reduce((total, badge) => total + badge.status.count, 0);
 
   return (
-    <List isLoading={loading}>
-      {badges.map((badge, index) => (
-        <List.Item
-          key={index}
-          title={badge.name}
-          icon={{ fileIcon: badge.path }}
-          accessories={[
-            {
-              tag: {
-                value: badge.enabled ? "Enabled" : "",
-                color: badge.enabled ? Color.Green : Color.SecondaryText,
-              },
-              icon: badge.enabled ? Icon.Checkmark : Icon.CircleDisabled,
-            },
-          ]}
-          actions={
-            <ActionPanel>
-              <ActionPanel.Section>
-                <Action
-                  title={!badge.enabled ? "Enable Badge" : "Disable Badge"}
-                  icon={!badge.enabled ? Icon.CheckCircle : Icon.CircleDisabled}
-                  onAction={() => handleToggle(badge)}
-                />
-                <CreateNewBadge />
-              </ActionPanel.Section>
-              <ActionPanel.Section>
-                <Action
-                  title={`Remove Badge`}
-                  icon={Icon.Trash}
-                  style={Action.Style.Destructive}
-                  shortcut={{ modifiers: ["ctrl"], key: "x" }}
-                  onAction={() => handleRemove(badge)}
-                />
-                <Action
-                  title="Remove All Badges"
-                  icon={Icon.Trash}
-                  style={Action.Style.Destructive}
-                  shortcut={{ modifiers: ["ctrl", "shift"], key: "x" }}
-                  onAction={() => handleRemove()}
-                />
-              </ActionPanel.Section>
-            </ActionPanel>
-          }
+    <MenuBarExtra
+      isLoading={isLoading}
+      title={cache?.preferences.showTotal && total ? `${total}` : ""}
+      icon={{
+        source: !total ? "bell.svg" : "bell-fill.svg",
+        tintColor: !total ? cache?.preferences.defaultColor : cache?.preferences.activeColor,
+      }}
+    >
+      <MenuBarExtra.Section>
+        {sortedBadges.map((badge) => (
+          <MenuBarExtra.Item
+            key={badge.bundleId}
+            title={badge.app.name}
+            subtitle={badge.status.count ? `(${badge.status.count})` : ""}
+            icon={{ fileIcon: badge.app.path }}
+            onAction={() => open(badge.app.path)}
+          />
+        ))}
+      </MenuBarExtra.Section>
+
+      <MenuBarExtra.Section>
+        <MenuBarExtra.Item
+          title="Configure Badges"
+          shortcut={{ modifiers: ["cmd"], key: "1" }}
+          onAction={() => launchCommand({ name: "search", type: LaunchType.UserInitiated })}
         />
-      ))}
-      {!badges.length && (
-        <List.EmptyView
-          title={"No Badges"}
-          icon={Icon.Bell}
-          actions={
-            <ActionPanel>
-              <CreateNewBadge />
-            </ActionPanel>
-          }
+        <MenuBarExtra.Item
+          title="Configure Extension"
+          shortcut={{ modifiers: ["cmd"], key: "2" }}
+          onAction={() => openExtensionPreferences()}
         />
-      )}
-    </List>
+      </MenuBarExtra.Section>
+    </MenuBarExtra>
   );
 }
-
-export default Command;

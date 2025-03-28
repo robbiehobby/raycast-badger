@@ -1,65 +1,48 @@
-import { Alert, confirmAlert, Icon, LocalStorage } from "@raycast/api";
-import useScripts from "./scripts.ts";
-import { BadgerApplication, getPreferences, sortBadges } from "./badger.ts";
+import { getApplications, getPreferenceValues, LocalStorage } from "@raycast/api";
 
-const storageKey = "badges";
+export default function storage() {}
 
-function useStorage() {
-  const preferences = getPreferences();
+storage.getPreferences = async (): Promise<Preferences> => {
+  return getPreferenceValues();
+};
 
-  async function getBadges(enabled: boolean = false): Promise<BadgerApplication[]> {
-    const storage = await LocalStorage.allItems();
-    let badges: BadgerApplication[] = storage[storageKey] ? JSON.parse(storage[storageKey]) : [];
+storage.getBadges = async () => {
+  const apps = await getApplications();
+  const badges = JSON.parse((await LocalStorage.getItem("badges")) || "{}") as BadgeList;
 
-    if (enabled) badges = badges.filter((badge) => badge.enabled);
-    if (preferences.disableInactive) {
-      const { appIsOpen } = useScripts();
-      await Promise.all(
-        badges.map(async (badge) => {
-          badge.active = await appIsOpen(badge);
-        }),
-      );
-      if (enabled) badges = badges.filter((badge) => badge.active);
+  Object.entries(badges).forEach(([bundleId, badge]) => {
+    const app = apps.filter((app) => app.bundleId === bundleId).pop();
+    if (!app) {
+      // Raycast is not aware of the application.
+      delete badges[bundleId];
+      return;
     }
+    badge.app = app;
+    badge.status = { count: 0, indeterminate: false };
+  });
 
-    return sortBadges(badges);
-  }
+  return badges;
+};
 
-  async function saveBadge(badge: BadgerApplication) {
-    let badges = await getBadges();
-    const badgeExists = badges.filter((_badge) => _badge.bundleId === badge.bundleId);
+storage.sortBadges = (badges: BadgeList) => {
+  return Object.values(badges).sort((a, b) =>
+    a.app.name.localeCompare(b.app.name, Intl.DateTimeFormat().resolvedOptions().locale, {
+      sensitivity: "base",
+    }),
+  );
+};
 
-    if (badgeExists.length > 0)
-      badges = badges.map((_badge) => {
-        return _badge.bundleId === badge.bundleId ? badge : _badge;
-      });
-    else badges.push(badge);
+storage.saveBadge = async (badge: Badge) => {
+  const badges = await storage.getBadges();
+  badges[badge.bundleId] = badge;
+  await LocalStorage.setItem("badges", JSON.stringify(badges));
+};
 
-    await LocalStorage.setItem(storageKey, JSON.stringify(badges));
-  }
+storage.deleteBadge = async (badge: Badge) => {
+  const badges = await storage.getBadges();
+  if (!badges[badge.bundleId]) return;
+  delete badges[badge.bundleId];
+  await LocalStorage.setItem("badges", JSON.stringify(badges));
+};
 
-  async function removeBadge(badge?: BadgerApplication) {
-    let badges = await getBadges();
-
-    if (badge) badges = badges.filter((_badge) => badge.bundleId !== _badge.bundleId);
-    else if (
-      await confirmAlert({
-        title: "Do you want to remove all badges?",
-        icon: Icon.ExclamationMark,
-        primaryAction: {
-          title: "Remove",
-          style: Alert.ActionStyle.Destructive,
-        },
-      })
-    ) {
-      await LocalStorage.removeItem(storageKey);
-      badges = [];
-    }
-
-    await LocalStorage.setItem(storageKey, JSON.stringify(badges));
-  }
-
-  return { getBadges, saveBadge, removeBadge };
-}
-
-export default useStorage;
+storage.deleteAllBadges = async () => LocalStorage.removeItem("badges");
