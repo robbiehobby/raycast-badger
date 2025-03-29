@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { launchCommand, LaunchType, MenuBarExtra, open, openExtensionPreferences } from "@raycast/api";
+import { Keyboard, launchCommand, LaunchType, MenuBarExtra, open, openExtensionPreferences } from "@raycast/api";
 import { useCachedState } from "@raycast/utils";
 import storage from "./utils/storage.ts";
 import scripts from "./utils/scripts.ts";
 import catchError from "./utils/error.ts";
+import KeyEquivalent = Keyboard.KeyEquivalent;
 
 export default function Badges() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,12 +45,13 @@ export default function Badges() {
         tintColor: !total ? cache?.preferences.defaultColor : cache?.preferences.activeColor,
       }}
     >
-      <MenuBarExtra.Section>
-        {sortedBadges.map((badge) => (
+      <MenuBarExtra.Section title="Applications">
+        {sortedBadges.map((badge, key) => (
           <MenuBarExtra.Item
             key={badge.bundleId}
             title={badge.app.name}
             subtitle={badge.status.count ? `(${badge.status.count})` : ""}
+            shortcut={{ modifiers: [], key: `${key + 1}` as KeyEquivalent }}
             icon={{ fileIcon: badge.app.path }}
             onAction={() => open(badge.app.path)}
           />
