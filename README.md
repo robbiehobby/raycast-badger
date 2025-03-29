@@ -5,3 +5,4 @@ Raycast extension to show Dock badge counts in the menu bar.
 ![](/metadata/screenshot-1.png)
 ![](/metadata/screenshot-2.png)
 ![](/metadata/screenshot-3.png)
+![](/metadata/screenshot-4.png)
