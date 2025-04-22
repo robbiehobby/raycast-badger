@@ -125,10 +125,10 @@
     "build": "ray build && ray build -o ./public"
   },
   "devDependencies": {
-    "@raycast/api": "^1.85.2",
-    "@raycast/utils": "^1.18.1",
-    "@types/node": "^22.13.14",
-    "@types/react": "^19.0.12",
-    "typescript": "^5.4.5"
+    "@raycast/api": "^1.96.0",
+    "@raycast/utils": "^1.19.1",
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "typescript": "^5.8.3"
   }
 }
