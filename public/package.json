@@ -4,16 +4,19 @@
   "title": "Badger",
   "description": "Show macOS Dock badges in the menu bar.",
   "author": "robbiehobby",
+  "license": "MIT",
   "icon": "extension-icon.png",
   "scripts": {
     "dev": "ray develop",
     "build": "ray build && rsync -rti ~/.config/raycast/extensions/badger/ public"
   },
   "devDependencies": {
+    "@types/node": "^22.15.2",
+    "@types/react": "^19.1.2"
+  },
+  "dependencies": {
     "@raycast/api": "^1.96.1",
     "@raycast/utils": "^1.19.1",
-    "@types/node": "^22.15.2",
-    "@types/react": "^19.1.2",
     "typescript": "^5.8.3"
   },
   "commands": [
