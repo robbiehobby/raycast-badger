@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "badger",
   "title": "Badger",
-  "description": "Show macOS Dock badges in the menu bar.",
+  "description": "Show the macOS Dock badge counts in the menu bar.",
   "author": "robbiehobby",
   "license": "MIT",
   "icon": "extension-icon.png",

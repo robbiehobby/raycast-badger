@@ -1,4 +1,6 @@
-Raycast extension to show Dock badge counts in the menu bar.
+## Raycast Badger Extension
+
+Show the macOS Dock badge counts in the menu bar.
 
 <br>
 
