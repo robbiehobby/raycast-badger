@@ -15,7 +15,7 @@
     "@types/react": "^19.1.2"
   },
   "dependencies": {
-    "@raycast/api": "^1.96.3",
+    "@raycast/api": "^1.97.0",
     "@raycast/utils": "^1.19.1",
     "typescript": "^5.8.3"
   },
