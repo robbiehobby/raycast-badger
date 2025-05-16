@@ -41,7 +41,7 @@ export default function Badges() {
       isLoading={isLoading}
       title={cache?.preferences.showTotal && total ? `${total}` : ""}
       icon={{
-        source: !total ? "bell.svg" : "bell-fill.svg",
+        source: !total ? "bell.svg" : "bell-ring.svg",
         tintColor: !total ? cache?.preferences.defaultColor : cache?.preferences.activeColor,
       }}
     >
