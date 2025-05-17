@@ -8,7 +8,7 @@
   "icon": "extension-icon.png",
   "scripts": {
     "dev": "ray develop",
-    "build": "ray build && rsync -rti ~/.config/raycast/extensions/badger/ build"
+    "build": "ray build && rsync -rti ~/.config/raycast/extensions/badger/ public"
   },
   "devDependencies": {
     "@types/node": "^22.15.14",
